@@ -1,0 +1,123 @@
+import pymysql
+from flask import Flask, jsonify, request
+import csv
+from flask_sqlalchemy import SQLAlchemy
+from flask_cors import CORS
+
+app = Flask(__name__)
+CORS(app)
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///delfin.db'
+db = SQLAlchemy(app)
+
+@app.route('/')
+def index():
+    return "¡Hola, mundo!"
+
+
+# Configurar pymysql
+pymysql.install_as_MySQLdb()
+
+# Establecer la conexión a la base de datos
+connection = pymysql.connect(
+    host='localhost',
+    user='root',
+    password='',
+    database='delfin',
+    port=3306
+)
+
+
+cursor = connection.cursor()
+
+# Consulta SQL para verificar si la tabla 'proyects' existe
+table_exists_query = '''
+    SELECT COUNT(*) FROM information_schema.tables
+    WHERE table_schema = 'delfin' AND table_name = 'Proyects'
+'''
+# Ejecutar la consulta para verificar si la tabla existe
+cursor.execute(table_exists_query)
+table_exists = cursor.fetchone()[0]  # Obtener el resultado de la consulta
+
+if not table_exists:
+    # Consulta SQL para crear la tabla 'proyects'
+    create_table_query = '''
+        CREATE TABLE Proyects (
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            title VARCHAR(32),
+            `desc` VARCHAR(100),
+            saveOn VARCHAR(200)
+        )
+    '''
+    # Ejecutar la consulta para crear la tabla
+    cursor.execute(create_table_query)
+
+    # Confirmar los cambios en la base de datos
+    connection.commit()
+
+cursor.close()
+connection.close()
+
+class Proyects(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    # Otros atributos de la clase Proyects
+
+    def __repr__(self):
+        return f"<Proyects(id={self.id})>"
+
+
+@app.route('/process_csv', methods=['POST'])
+def process_csv():
+    # Obtener el nombre del archivo CSV desde los datos enviados en la solicitud
+    nombre_archivo = request.form.get('nombre_archivo')
+
+    # Construir la ruta completa del archivo
+    ruta_archivo = fr'C:\CyKit-master\prueba{nombre_archivo}.csv'
+
+    # Lista de arreglos para almacenar los datos
+    columnas = [[] for _ in range(15)]
+
+    # Procesar el archivo CSV
+    with open(ruta_archivo, 'r') as archivo:
+        lector_csv = csv.reader(archivo)
+        next(lector_csv)
+        
+        for fila in lector_csv:
+            if len(fila) == 15:
+                for i in range(15):
+                    floatValue = float(fila[i])
+                    columnas[i].append(floatValue)
+
+    # Devolver los resultados como una respuesta JSON
+    resultados = {f'Columna {i+1}': columna for i, columna in enumerate(columnas)}
+    return jsonify(resultados)
+
+@app.route('/create-proyect', methods=['POST'])
+def create_proyect():
+    # Obtener los datos del cuerpo de la solicitud
+    data = request.get_json()
+
+    # Obtener el último ID registrado en la tabla
+    last_signal = Proyects.query.order_by(Proyects.id.desc()).first()
+
+    # Generar el nuevo ID sumando 1 al último ID registrado
+    new_id = last_signal.id + 1 if last_signal else 1
+
+    # Crear una instancia de la señal con los datos proporcionados
+    signal = Proyects(
+        id=new_id,
+        title=data['title'],
+        description=data['description'],
+        saveOn=data['saveOn']
+    )
+
+    # Guardar la instancia en la base de datos
+    db.session.add(signal)
+    db.session.commit()
+
+    # Devolver una respuesta con el ID de la señal creada
+    response = {'id': Proyects.id}
+    return jsonify(response), 201
+
+if __name__ == '__main__':
+    app.run()
+

@@ -1,0 +1,81 @@
+<ion-card>
+
+    <ion-row class="ion-padding">
+        <ion-col size="12">
+            <h2>Señales Procesadas:</h2>
+        </ion-col>
+    </ion-row>
+    <ion-accordion-group>
+        <ion-accordion>
+            <ion-item slot="header">
+                <h5>Electrodos Frontales Izquierdos</h5>
+            </ion-item>
+            <ion-list slot="content">
+                <ion-card>
+                    <ion-card-header>
+                        <ion-label>Electrodos Frontales Izquierdos</ion-label>
+                    </ion-card-header>
+                    <ion-card-content>
+                        <canvas #lineCanvasSP style="position: relative; height:15vh; width:30vw"></canvas>
+                    </ion-card-content>
+                </ion-card>
+            </ion-list>
+        </ion-accordion>
+    </ion-accordion-group>
+    <br>
+    <ion-accordion-group>
+        <ion-accordion>
+            <ion-item slot="header">
+                <h5>Electrodos Frontales Derechos</h5>
+            </ion-item>
+            <ion-list slot="content">
+                <ion-card>
+                    <ion-card-header>
+                        <ion-label>Electrodos Frontales Derechos</ion-label>
+                    </ion-card-header>
+                    <ion-card-content>
+                        <canvas #lineCanvasFDSP style="position: relative; height:15vh; width:30vw"></canvas>
+                    </ion-card-content>
+                </ion-card>
+            </ion-list>
+        </ion-accordion>
+    </ion-accordion-group>
+
+    <br>
+    <ion-accordion-group>
+        <ion-accordion>
+            <ion-item slot="header">
+                <h5>Electrodos Parietales</h5>
+            </ion-item>
+            <ion-list slot="content">
+                <ion-card>
+                    <ion-card-header>
+                        <ion-label>Electrodos Parietales</ion-label>
+                    </ion-card-header>
+                    <ion-card-content>
+                        <canvas #lineCanvasPSP style="position: relative; height:15vh; width:30vw"></canvas>
+                    </ion-card-content>
+                </ion-card>
+            </ion-list>
+        </ion-accordion>
+    </ion-accordion-group>
+    <br>
+
+    <ion-accordion-group>
+        <ion-accordion>
+            <ion-item slot="header">
+                <h5>Electrodos Occipitales</h5>
+            </ion-item>
+            <ion-list slot="content">
+                <ion-card>
+                    <ion-card-header>
+                        <ion-label>Electrodos Occipitales</ion-label>
+                    </ion-card-header>
+                    <ion-card-content>
+                        <canvas #lineCanvasOSP style="position: relative; height:15vh; width:30vw"></canvas>
+                    </ion-card-content>
+                </ion-card>
+            </ion-list>
+        </ion-accordion>
+    </ion-accordion-group>
+</ion-card>

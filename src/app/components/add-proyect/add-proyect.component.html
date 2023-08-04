@@ -1,0 +1,39 @@
+<ion-header>
+    <ion-toolbar color="primary">
+        <ion-title>
+            Nuevo Proyecto
+        </ion-title>
+        <ion-buttons slot="end">
+            <ion-button (click)="closeModal()">
+                <ion-icon name="close"></ion-icon>
+            </ion-button>
+        </ion-buttons>
+    </ion-toolbar>
+</ion-header>
+<br>
+<ion-content class="ion-padding">
+    <form (ngSubmit)="submitForm()">
+        <ion-item>
+            <ion-label position="floating">Título del proyecto</ion-label>
+            <ion-input type="text" [(ngModel)]="projectTitle" name="projectTitle" required></ion-input>
+        </ion-item>
+        <br>
+        <ion-item>
+            <ion-label position="floating">Descripción</ion-label>
+            <ion-textarea [(ngModel)]="projectDescription" name="projectDescription" required></ion-textarea>
+        </ion-item>
+        <br>
+        <ion-item>
+            <ion-label position="floating">Ruta del archivo a comparar</ion-label>
+            <ion-input type="text" [(ngModel)]="projectFilePath" name="projectFilePath" required></ion-input>
+        </ion-item>
+        <br>
+        <ion-item>
+            <ion-label position="floating">Ruta del archivo de datos reales</ion-label>
+            <ion-input type="text" [(ngModel)]="projectFilePathCompare" name="projectFilePathCompare" required></ion-input>
+        </ion-item>
+        <br>
+        <br>
+        <ion-button expand="block" type="submit" [disabled]="!formIsValid()">Guardar</ion-button>
+    </form>
+</ion-content>

@@ -1,0 +1,20 @@
+<ion-accordion-group>
+    <ion-accordion>
+        <ion-item slot="header">
+            <h5>Resultados</h5>
+        </ion-item>
+        <ion-list slot="content">
+            <ion-card color="warning">
+                <ion-card-header>
+                    <ion-label>Resultados</ion-label>
+                </ion-card-header>
+                <ion-card-content>
+                    <div *ngFor="let data of infoToShow">
+                        <ion-label>Electrodo: {{ data.name }} ----- Promedio: {{ data.data }}</ion-label>
+                    </div>
+                </ion-card-content>
+            </ion-card>
+
+        </ion-list>
+    </ion-accordion>
+</ion-accordion-group>

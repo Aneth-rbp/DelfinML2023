@@ -1,0 +1,186 @@
+<ion-header [translucent]="true">
+    <ion-toolbar color="primary">
+        <ion-buttons slot="start">
+            <ion-back-button defaultHref="/home"></ion-back-button>
+        </ion-buttons>
+        <ion-title>
+            Verano Delfín 2023
+        </ion-title>
+    </ion-toolbar>
+</ion-header>
+
+<ion-row *ngIf="!Verify">
+    <ion-col size="10"></ion-col>
+    <ion-col size="2">
+        <ion-button color="warning" (click)="Process()">
+            <ion-icon slot="start" name="color-wand-outline"></ion-icon>
+            Procesar señales
+        </ion-button>
+    </ion-col>
+</ion-row>
+
+<ion-content class="ion-padding">
+
+    <div *ngIf="result != null">
+        <app-results [result]="result"></app-results>
+    </div>
+
+    <ion-accordion-group *ngIf="VerifyTrain && Verify">
+        <ion-accordion>
+            <ion-item slot="header">
+                <h5>Formulario Para Procesar Resultados</h5>
+            </ion-item>
+            <ion-list slot="content">
+                <ion-card color="light" [disabled]="infoValidate == true">
+                    <ion-card-header>
+                        <ion-card-title>Formulario Para Procesar Resultados</ion-card-title>
+                    </ion-card-header>
+                    <ion-card-content>
+                        <ion-label>Electrodos tomados en cuenta:</ion-label>
+                        <ion-item>
+                            <ion-label>Electrodos</ion-label>
+                            <ion-select [(ngModel)]="selectedElec" multiple="true" [placeholder]="selectedElec">
+                                <ion-select-option *ngFor="let elec of electrodos" [value]="elec.i">{{ elec.name }}</ion-select-option>
+                            </ion-select>
+                        </ion-item>
+                        <br>
+                        <h2>Señales de muestra:</h2>
+                        <br>
+                        <ion-label>Datos a tomar en cuenta (Los números corresponen a número de dato):</ion-label>
+                        <ion-row>
+                            <ion-col size="6">
+                                <ion-item>
+                                    <ion-label>Desde</ion-label>
+                                    <ion-input type="number" [(ngModel)]="startTrain"></ion-input>
+                                </ion-item>
+                            </ion-col>
+                            <ion-col size="6">
+                                <ion-item>
+                                    <ion-label>Hasta</ion-label>
+                                    <ion-input type="number" [(ngModel)]="endTrain"></ion-input>
+                                </ion-item>
+                            </ion-col>
+                        </ion-row>
+                        <br>
+                        <h2>Señales Incognitas:</h2>
+                        <br>
+                        <ion-label>Datos a tomar en cuenta (Los números corresponen a número de dato):</ion-label>
+                        <ion-row>
+                            <ion-col size="6">
+                                <ion-item>
+                                    <ion-label>Desde</ion-label>
+                                    <ion-input type="number" [(ngModel)]="startTest"></ion-input>
+                                </ion-item>
+                            </ion-col>
+                            <ion-col size="6">
+                                <ion-item>
+                                    <ion-label>Hasta</ion-label>
+                                    <ion-input type="number" [(ngModel)]="endTest"></ion-input>
+                                </ion-item>
+                            </ion-col>
+                        </ion-row>
+                        <ion-row>
+                            <ion-col size="12">
+                                <ion-button color="warning" [disabled]="!selectedElec" (click)="VerifyData()" expand="block" shape="round">
+                                    Verificar Datos
+                                </ion-button>
+                            </ion-col>
+                        </ion-row>
+                    </ion-card-content>
+                </ion-card>
+                <ion-card *ngIf="infoValidate == true">
+                    <ion-card-header>
+                        <ion-row>
+                            <ion-col size="11">
+
+                                <ion-card-title>Evaluación de datos</ion-card-title>
+                            </ion-col>
+                            <ion-col size="1">
+                                <ion-button (click)="infoValidate = false">
+                                    <ion-icon slot="icon-only" name="arrow-back"></ion-icon>
+                                </ion-button>
+                            </ion-col>
+                        </ion-row>
+                    </ion-card-header>
+                    <ion-card-content>
+                        <br>
+                        <h2>Señales de muestra:</h2>
+                        <br>
+                        <div *ngFor="let data of dataTrainToShow; let a = index">
+                            <ion-row>
+                                <ion-col size="12">
+                                    <ion-label> {{ data.elec }} </ion-label>
+                                </ion-col>
+                            </ion-row>
+                            <ion-row>
+                                <ion-col size="4" *ngFor="let data of data.data; let i = index">
+                                    <ion-item>
+                                        <ion-label color="medium"> {{ data }}
+                                            <ion-text color="danger">*</ion-text>
+                                        </ion-label>
+                                        <ion-input [(ngModel)]="validTrain[a][i]" type="number" required></ion-input>
+                                    </ion-item>
+
+                                </ion-col>
+                            </ion-row>
+                        </div>
+                        <br>
+                        <h2>Señales Incognitas:</h2>
+                        <br>
+                        <div *ngFor="let data of dataTestToShow; let a = index">
+                            <ion-row>
+                                <ion-col size="12">
+                                    <ion-label> {{ data.elec }} </ion-label>
+                                </ion-col>
+                            </ion-row>
+                            <ion-row>
+                                <ion-col size="4" *ngFor="let data of data.data; let i = index">
+                                    <ion-item>
+                                        <ion-label color="medium"> {{ data }}
+                                            <ion-text color="danger">*</ion-text>
+                                        </ion-label>
+                                        <ion-input [(ngModel)]="validTest[a][i]" type="number" required></ion-input>
+                                    </ion-item>
+
+                                </ion-col>
+                            </ion-row>
+                        </div>
+                        <ion-row>
+                            <ion-col size="12">
+                                <ion-button [disabled]="loadingResult == true" (click)="Results()" expand="block" shape="round">
+                                    Ver Resultados
+                                </ion-button>
+                            </ion-col>
+                        </ion-row>
+                    </ion-card-content>
+                </ion-card>
+            </ion-list>
+        </ion-accordion>
+    </ion-accordion-group>
+
+
+
+    <ion-card color="tertiary">
+        <ion-card-header>
+            <ion-card-title>Señales De Muestra</ion-card-title>
+        </ion-card-header>
+        <div *ngIf="VerifyTrain">
+            <app-results-graphics [Verify]="VerifyTrain" [beforeToVerify]="trainFile"></app-results-graphics>
+        </div>
+        <div *ngIf="trainFile">
+            <app-data [beforeToVerify]="trainFile"></app-data>
+        </div>
+    </ion-card>
+
+    <ion-card color="primary">
+        <ion-card-header>
+            <ion-card-title>Señales Incognitas</ion-card-title>
+        </ion-card-header>
+        <div *ngIf="Verify">
+            <app-results-graphics [Verify]="Verify" [beforeToVerify]="testFile"></app-results-graphics>
+        </div>
+        <div *ngIf="testFile">
+            <app-data [beforeToVerify]="testFile"></app-data>
+        </div>
+    </ion-card>
+</ion-content>
